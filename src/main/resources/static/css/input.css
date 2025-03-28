@@ -1,0 +1,6 @@
+/* CSS Principal */
+@tailwind base;  /* Estilos base de Tailwind  */
+@tailwind components; /* Clases para componentes predefinidos */
+@tailwind utilities; /* Clases utilitarias (las que llamo en el html) */
+
+

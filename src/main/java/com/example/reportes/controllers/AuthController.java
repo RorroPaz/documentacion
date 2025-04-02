@@ -2,8 +2,7 @@ package com.example.reportes.controllers;
 
 import java.time.LocalDateTime;
 
-import javax.swing.Spring;
-
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +37,10 @@ public class AuthController {
             @RequestParam(value = "logout", required = false) String logout,
             @RequestParam(value = "registered", required = false) String registered,
             Model model) {
+
+        // Limpia cualquier autenticación existente
+        SecurityContextHolder.clearContext();
+        
         // Los RquestParam son todos los posinles Parametros que puede cachar
         model.addAttribute("error", error != null);
         model.addAttribute("logout", logout != null);
@@ -45,9 +48,9 @@ public class AuthController {
         return "auth/login";
     }
 
-    //Procesa login (manejado por Spring Security)
+    // Procesa login (manejado por Spring Security)
     // @PostMapping("/login")
-    // para procesar el formulario del login y validar el usuario 
+    // para procesar el formulario del login y validar el usuario
 
     // Muestra formulario de registro
     @GetMapping("/register")

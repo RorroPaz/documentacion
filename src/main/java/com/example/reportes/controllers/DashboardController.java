@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DashboardController {
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
     @GetMapping("/dashboard")
     public String dashboard(Model model) { // Ahora sí reconocerá addAttribute()
 

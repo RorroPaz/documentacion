@@ -13,7 +13,8 @@ public class InicializadorDatos implements CommandLineRunner {
 
     private final RolRepository rolRepository;
 
-    public InicializadorDatos(RolRepository rolRepository) {
+    public InicializadorDatos(RolRepository rolRepository) { // Constructor para dependencias obligatorias
+
         this.rolRepository = rolRepository;
     }
 
@@ -23,13 +24,13 @@ public class InicializadorDatos implements CommandLineRunner {
             // Rol ADMINISTRADOR con permisos completos
             Rol admin = Rol.builder()
                 .nombre("ADMINISTRADOR")
-                .permisos("{\"puede_editar\":true, \"puede_eliminar\":true, \"modulos\":[\"*\"]]}")
+                .permisos("{\"puede_editar\":true, \"puede_eliminar\":true, \"modulos\":[\"*\"]}")
                 .build();
 
             // Rol USUARIO con permisos básicos
             Rol usuario = Rol.builder()
                 .nombre("USUARIO")
-                .permisos("{\"puede_editar\":false, \"puede_eliminar\":false, \"modulos\":[\"documentos\"]]}")
+                .permisos("{\"puede_editar\":false, \"puede_eliminar\":false, \"modulos\":[\"documentos\"]}")
                 .build();
 
             rolRepository.saveAll(Set.of(admin, usuario));

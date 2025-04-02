@@ -11,6 +11,55 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class ConfiguracionSeguridad {
+    // Entender cómo Spring Security maneja el proceso de autenticación es fundamental para trabajar con seguridad en aplicaciones Spring Boot.
+    @Bean
+    public SecurityFilterChain filtroSeguridad(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(autorizar -> autorizar
+                .requestMatchers("/","/login", "/css/**", "/js/**", "/webjars/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/documentos/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
+                .anyRequest().authenticated()
+            )
+            .formLogin(formulario -> formulario
+                .loginPage("/login") // @GetMapping("/login") Página personalizada de login
+                .loginProcessingUrl("/login") // @PostMapping("/login") Procesa el formulario
+                .defaultSuccessUrl("/dashboard", true) // Redirección post-login exitoso
+                .failureUrl("/login?error=true") // Manejo de errores
+                .permitAll()
+            )
+            .logout(cierreSesion -> cierreSesion
+                .logoutUrl("/logout") // URL que activa el cierre de sesión (POST)
+                .logoutSuccessUrl("/login?logout=true") // Confirma cierre de sesión, le pasa la variable logout a login con el valor true
+                .invalidateHttpSession(true) // Elimina la sesión
+                .deleteCookies("JSESSIONID")// Borra la cookie
+            ) 
+            .rememberMe(recordar -> recordar
+                .key("claveUnicaYSecreta123")
+                .tokenValiditySeconds(86400) // 1 día
+            )
+            .sessionManagement(session -> session
+                 .maximumSessions(1)
+                 .expiredUrl("/login?expired")
+            )
+            .exceptionHandling(excepciones -> excepciones
+                .accessDeniedPage("/acceso-denegado")
+            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/auth/register")
+            );
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder codificadorContrasena() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+
+// /webjars/ Librerías frontend empaquetadas como JARs (ej: Bootstrap, FontAwesome).
+
 
     /*
         .authorizeHttpRequests(autorizar -> autorizar
@@ -42,47 +91,3 @@ public class ConfiguracionSeguridad {
             Se manda al controlador acceso denegado /acceso-denegado
 */
     
-
-    @Bean
-    public SecurityFilterChain filtroSeguridad(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests(autorizar -> autorizar
-                .requestMatchers("/login", "/auth/register", "/css/**", "/js/**", "/webjars/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
-                .requestMatchers("/documentos/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
-                .anyRequest().authenticated()
-            )
-            .formLogin(formulario -> formulario
-                .loginPage("/login") // Convención de nombres para organizar tus archivos
-                .defaultSuccessUrl("/inicio", true) // Redirige siempre aquí tras login exitoso
-                .failureUrl("/login?error=true") // Muestra error en la misma página, le pasa la variable error como true
-                .permitAll()
-            )
-            .logout(cierreSesion -> cierreSesion
-                .logoutUrl("/logout") // URL que activa el cierre de sesión (POST)
-                .logoutSuccessUrl("/login?logout=true") // Confirma cierre de sesión, le pasa la variable logout a login con el valor true
-                .invalidateHttpSession(true) // Elimina la sesión
-                .deleteCookies("JSESSIONID")// Borra la cookie
-            ) 
-            .rememberMe(recordar -> recordar
-                .key("claveUnicaYSecreta123")
-                .tokenValiditySeconds(86400) // 1 día
-            )
-            .sessionManagement(session -> session
-                 .maximumSessions(1)
-                 .expiredUrl("/login?expired")
-            )
-            .exceptionHandling(excepciones -> excepciones
-                .accessDeniedPage("/acceso-denegado")
-            );
-        return http.build();
-    }
-
-    @Bean
-    public PasswordEncoder codificadorContrasena() {
-        return new BCryptPasswordEncoder();
-    }
-}
-
-
-// /webjars/ Librerías frontend empaquetadas como JARs (ej: Bootstrap, FontAwesome).

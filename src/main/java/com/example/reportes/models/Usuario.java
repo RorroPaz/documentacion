@@ -55,7 +55,7 @@ public class Usuario {
     private List<Documento> documentos = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario") // En las relaciones se mapea la columna con el nombre que manejamos en el
-                                     // modelo
+    // modelo
     @Builder.Default
     private List<HistorialCambio> historialCambios = new ArrayList<>();
 

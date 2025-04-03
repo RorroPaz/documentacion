@@ -2,5 +2,8 @@
 @tailwind base;  /* Estilos base de Tailwind  */
 @tailwind components; /* Clases para componentes predefinidos */
 @tailwind utilities; /* Clases utilitarias (las que llamo en el html) */
-
-
+@layer utilities {
+    .animation-delay-1000 {
+        animation-delay: 1s;
+    }
+}

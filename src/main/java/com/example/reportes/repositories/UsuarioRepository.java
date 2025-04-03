@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.reportes.models.Usuario;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
@@ -19,5 +20,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     // existe el usuario ?
     boolean existsByEmail(String email);
+
+    // Buscar por ID del rol (rol_id en la tabla usuario)
+    List<Usuario> findByRol_Id(Integer rolId);
+    
 
 } 

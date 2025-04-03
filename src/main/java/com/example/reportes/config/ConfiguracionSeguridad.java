@@ -32,20 +32,20 @@ public class ConfiguracionSeguridad {
     public SecurityFilterChain filtroSeguridad(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(autorizar -> autorizar
-                .requestMatchers("/","/register","/login", "/css/**", "/js/**", "/webjars/**").permitAll()
+                .requestMatchers("/register","/login").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMINISTRADOR")
-                .requestMatchers("/documentos/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
+                .requestMatchers("/documentos/**").hasAnyRole("ADMINISTRADOR", "USUARIO") //Permite el acceso a cualquier api /documentos/
                 .anyRequest().authenticated()
             )
             .formLogin(formulario -> formulario
                 .loginPage("/login") // @GetMapping("/login") Página personalizada de login
                 .loginProcessingUrl("/login") // @PostMapping("/login") Procesa el formulario
-                .defaultSuccessUrl("/dashboard", true) // Redirección post-login exitoso
+                .defaultSuccessUrl("/documentos/dashboard", true) // Redirección post-login exitoso
                 .failureUrl("/login?error=true") // Manejo de errores
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/logout") // URL que activa el cierre de sesión (POST)
+                .logoutUrl("/logout") // URL que activa el cierre de sesión (POST) lo maneja spring
                 .logoutSuccessUrl("/login?logout=true") // Confirma cierre de sesión, le pasa la variable logout a login con el valor true
                 .invalidateHttpSession(true) // Elimina la sesión
                 .deleteCookies("JSESSIONID")// Borra la cookie
@@ -54,13 +54,13 @@ public class ConfiguracionSeguridad {
             ) 
             .sessionManagement(session -> session
                  .maximumSessions(1)
-                 .expiredUrl("/login?expired")
+                 .expiredUrl("/login?expired=true")
             )
             .exceptionHandling(excepciones -> excepciones
                 .accessDeniedPage("/acceso-denegado")
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/auth/register")
+                .ignoringRequestMatchers("/register")
             );
         return http.build();
     }
@@ -68,6 +68,25 @@ public class ConfiguracionSeguridad {
     @Bean
     public PasswordEncoder codificadorContrasena() {
         return new BCryptPasswordEncoder();
+    }
+
+    // Agrega este método en la misma clase
+    @Bean
+    public FilterRegistrationBean<Filter> noCacheFilter() {
+        FilterRegistrationBean<Filter> filterRegBean = new FilterRegistrationBean<>();
+        filterRegBean.setFilter(new Filter() {
+            @Override
+            public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) 
+                throws IOException, ServletException {
+                HttpServletResponse response = (HttpServletResponse) res;
+                response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+                response.setHeader("Pragma", "no-cache");
+                response.setHeader("Expires", "0");
+                chain.doFilter(req, res);
+            }
+        });
+        filterRegBean.addUrlPatterns("/dashboard", "/documentos", "/usuarios","/register", "/usuarios");
+        return filterRegBean;
     }
 }
 

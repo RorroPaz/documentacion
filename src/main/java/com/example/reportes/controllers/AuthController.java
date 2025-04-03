@@ -2,6 +2,7 @@ package com.example.reportes.controllers;
 
 import java.time.LocalDateTime;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import com.example.reportes.models.Rol;
 import com.example.reportes.models.Usuario;
 import com.example.reportes.repositories.RolRepository;
 import com.example.reportes.repositories.UsuarioRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 public class AuthController {
@@ -36,11 +39,12 @@ public class AuthController {
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
             @RequestParam(value = "registered", required = false) String registered,
-            Model model) {
+            Model model,
+            HttpServletRequest request) {
 
         // Limpia cualquier autenticación existente
         SecurityContextHolder.clearContext();
-        
+
         // Los RquestParam son todos los posinles Parametros que puede cachar
         model.addAttribute("error", error != null);
         model.addAttribute("logout", logout != null);
@@ -70,11 +74,11 @@ public class AuthController {
         // Validar si el usuario o email ya existen
         if (usuarioRepository.existsByUsername(username)) {
             redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya está en uso.");
-            return "redirect:/auth/register";
+            return "redirect:/register";
         }
         if (usuarioRepository.existsByEmail(email)) {
             redirectAttributes.addFlashAttribute("error", "El email ya está registrado.");
-            return "redirect:/auth/register";
+            return "redirect:/register";
         }
 
         // Asignar rol "USUARIO" por defecto

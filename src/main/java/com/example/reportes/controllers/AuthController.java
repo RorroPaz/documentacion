@@ -43,7 +43,7 @@ public class AuthController {
             HttpServletRequest request) {
 
         // Limpia cualquier autenticación existente
-        SecurityContextHolder.clearContext();
+        //SecurityContextHolder.clearContext();
 
         // Los RquestParam son todos los posinles Parametros que puede cachar
         model.addAttribute("error", error != null);

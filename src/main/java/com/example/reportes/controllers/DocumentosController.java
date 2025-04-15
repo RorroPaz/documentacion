@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 @RequestMapping("/documentos")
-public class DashboardController {
+public class DocumentosController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 

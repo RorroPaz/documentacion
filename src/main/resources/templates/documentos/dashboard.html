@@ -33,7 +33,7 @@
                 <div class="flex items-center">
                     <span class="text-sm mr-4" th:text="'Hola, ' + ${usuario.nombreCompleto}">Hola, Admin</span>
                     <form th:action="@{/logout}" method="post">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
                         <button type="submit" class="text-sm hover:text-indigo-200">
                             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                         </button>
